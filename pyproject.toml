@@ -19,6 +19,7 @@ Changelog = "https://github.com/56kyle/pytest-environment/releases"
 python = "^3.9"
 click = ">=8.0.1"
 pytest = "^8.1.1"
+loguru = "^0.7.2"
 
 [tool.poetry.dev-dependencies]
 Pygments = ">=2.10.0"
