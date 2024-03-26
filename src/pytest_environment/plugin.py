@@ -7,8 +7,8 @@ from typing import Iterable
 
 import pytest
 from _pytest.config import Config
-from _pytest.config import Parser
 from _pytest.config import PytestPluginManager
+from _pytest.config.argparsing import Parser
 from _pytest.fixtures import FixtureRequest
 from _pytest.nodes import Collector
 from _pytest.nodes import Item
@@ -29,10 +29,10 @@ def pytest_addhooks(pluginmanager: PytestPluginManager) -> None:
     pluginmanager.add_hookspecs(hooks)
 
 
-def __retrieve_environments(
+def __retrieve_unique_environments(
     pluginmanager: PytestPluginManager,
 ) -> Iterable[Environment]:
-    """Returns all registered environments."""
+    """Returns all unique registered environments."""
     found_environments: list[Environment] = list(
         __iter_registered_environments(pluginmanager=pluginmanager)
     )
@@ -49,13 +49,13 @@ def __iter_registered_environments(
     pluginmanager: PytestPluginManager,
 ) -> Generator[Environment, None, None]:
     """Iterates over all registered environments."""
-    for registered_envs in pluginmanager.hook.register_environments():
+    for registered_envs in pluginmanager.hook.pytest_environments():
         yield from registered_envs
 
 
 def pytest_addoption(parser: Parser, pluginmanager: PytestPluginManager) -> None:
     """Pytest hook for adding to the CLI."""
-    for environment in __retrieve_environments(pluginmanager=pluginmanager):
+    for environment in __retrieve_unique_environments(pluginmanager=pluginmanager):
         parser.addoption(
             environment.enable_command,
             action="store_true",
@@ -75,7 +75,7 @@ def pytest_configure(config: Config) -> None:
     if not config.pluginmanager.hasplugin("pytest_repo_structure"):
         config.pluginmanager.register("pytest_repo_structure")
 
-    for env in __retrieve_environments(pluginmanager=config.pluginmanager):
+    for env in __retrieve_unique_environments(pluginmanager=config.pluginmanager):
         config.addinivalue_line(
             name="markers",
             line=f"{env.never_run_marker}: Marks the current context to not allow running tests"
@@ -99,7 +99,7 @@ def pytest_pycollect_makeitem(
 def pytest_generate_tests(metafunc: Metafunc) -> None:
     """Pytest hook for altering the tests being generated."""
     if "environment" in metafunc.fixturenames:
-        registered_envs: Iterable[Environment] = __retrieve_environments(
+        registered_envs: Iterable[Environment] = __retrieve_unique_environments(
             pluginmanager=metafunc.config.pluginmanager
         )
         possible_environments: Iterable[Environment] = [
@@ -118,7 +118,7 @@ def pytest_generate_tests(metafunc: Metafunc) -> None:
         )
 
 
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="session")
 def environment(request: FixtureRequest) -> Environment:
     """Parametrized fixture that returns currently relevant Environment instances."""
     env: Environment | None = getattr(request, "param", None)

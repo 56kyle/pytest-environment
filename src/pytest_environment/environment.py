@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from dataclasses import field
 
 from _pytest.config import Config
 from _pytest.nodes import Node
@@ -16,21 +16,21 @@ class Environment:
     Primarily allows parametrizing other fixtures by passing them config folders to reference.
     """
 
-    config_folder: Path
+    config_fixture: str
     enable_command: str
     disable_command: str
     command_dest: str
     never_run_marker: str
-    run_by_default: bool = False
+    run_by_default: bool = field(hash=False, default=False)
 
     @classmethod
-    def create_from_name(cls, name: str, config_folder: Path, **kwargs) -> Environment:
+    def create_from_name(cls, name: str, **kwargs) -> Environment:
         """Create an Environment with defaults based off of the environments name.
 
         Can pass through kwargs to override defaults based on name.
         """
         return cls(
-            config_folder=config_folder,
+            config_fixture=f"{name}_config_path",
             enable_command=f"--{name}",
             disable_command=f"--no-{name}",
             command_dest=name,

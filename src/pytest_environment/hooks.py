@@ -8,5 +8,5 @@ from pytest_environment.environment import Environment
 
 
 @hookspec
-def register_environments() -> Iterable[Environment]:
-    """Hook for registering environments."""
+def pytest_environments() -> Iterable[Environment]:
+    """Register environments for use in testing."""
