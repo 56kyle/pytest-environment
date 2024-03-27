@@ -139,29 +139,32 @@ class TestPytestPycollectMakeitem:
 
 class TestPytestGenerateTests:
     def test_pytest_generate_tests_with_no_environments(
-        self, pytester: Pytester, contest_with_no_environments_content: str
+        self, pytester: Pytester, conftest_with_no_environments_content: str
     ) -> None:
-        pytester.copy_example(contest_with_no_environments_content)
+        pytester.makeconftest(conftest_with_no_environments_content)
         pytester.copy_example("test_pytest_generate_tests.py")
-        pytester.runpytest().assert_outcomes(passed=0, failed=3)
+        pytester.runpytest().assert_outcomes(skipped=3)
 
     def test_pytest_generate_tests_with_one_environment(
-        self, pytester: Pytester, contest_with_one_environment_content: str
+        self, pytester: Pytester, conftest_with_one_environment_content: str
     ) -> None:
-        pytester.copy_example(contest_with_one_environment_content)
+        pytester.makeconftest(conftest_with_one_environment_content)
         pytester.copy_example("test_pytest_generate_tests.py")
-        pytester.runpytest().assert_outcomes(passed=0, failed=3)
+        pytester.runpytest("--dev").assert_outcomes(passed=2, skipped=1)
 
     def test_pytest_generate_tests_with_many_environments(
-        self, pytester: Pytester, contest_with_many_environments_content: str
+        self, pytester: Pytester, conftest_with_many_environments_content: str
     ) -> None:
-        pytester.copy_example(contest_with_many_environments_content)
+        pytester.makeconftest(conftest_with_many_environments_content)
         pytester.copy_example("test_pytest_generate_tests.py")
-        pytester.runpytest().assert_outcomes(passed=0, failed=3)
+        pytester.runpytest("--dev").assert_outcomes(passed=6)
+        pytester.runpytest("--qa").assert_outcomes(passed=6)
+        pytester.runpytest("--prod").assert_outcomes(passed=6)
 
     def test_pytest_generate_tests_with_duplicate_environments(
-        self, pytester: Pytester, contest_with_duplicate_environments_content: str
+        self, pytester: Pytester, conftest_with_duplicate_environments_content: str
     ) -> None:
-        pytester.copy_example(contest_with_duplicate_environments_content)
+        pytester.makeconftest(conftest_with_duplicate_environments_content)
         pytester.copy_example("test_pytest_generate_tests.py")
-        pytester.runpytest().assert_outcomes(passed=0, failed=3)
+        pytester.runpytest("--dev").assert_outcomes(passed=4)
+        pytester.runpytest("--qa").assert_outcomes(passed=4)

@@ -1,8 +1,10 @@
+import pytest
 from _pytest.fixtures import FixtureRequest
 
 from pytest_environment.environment import Environment
 
 
+@pytest.mark.no_dev
 def test_pytest_generate_tests_with_dev(
     request: FixtureRequest, environment: Environment
 ) -> None:
@@ -10,6 +12,7 @@ def test_pytest_generate_tests_with_dev(
     assert request.node.get_closest_marker("no_dev") is not None
 
 
+@pytest.mark.no_qa
 def test_pytest_generate_tests_with_qa(
     request: FixtureRequest, environment: Environment
 ) -> None:
@@ -17,6 +20,7 @@ def test_pytest_generate_tests_with_qa(
     assert request.node.get_closest_marker("no_qa") is not None
 
 
+@pytest.mark.no_prod
 def test_pytest_generate_tests_with_prod(
     request: FixtureRequest, environment: Environment
 ) -> None:
