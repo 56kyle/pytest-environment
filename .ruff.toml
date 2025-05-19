@@ -37,9 +37,34 @@ indent-width = 4
 target-version = "py39"
 
 [lint]
-select = ["B", "B9", "C", "D", "E", "F", "N", "S", "W"]
+# https://docs.astral.sh/ruff/rules
+select = [
+    "A",
+    "ARG",
+    "B",
+    "B9",
+    "BLE",
+    "C",
+    "C4",
+    "D",
+    "DTZ",
+    "E",
+    "F",
+    "I",
+    "N",
+    "PT",
+    "PTH",
+    "Q",
+    "RET",
+    "RUF",
+    "S",
+    "SIM",
+    "SLF",
+    "T10",
+    "TC",
+    "W"
+]
 ignore = ["E203", "E501"]
-pydocstyle.convention = "google"
 
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
@@ -49,11 +74,33 @@ unfixable = []
 # Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
+[lint.flake8-quotes]
+inline-quotes = "double"
+
+[lint.isort]
+force-single-line = true
+lines-after-imports = 2
+
+[lint.mccabe]
+max-complexity = 10
+
 [lint.per-file-ignores]
-"tests/*" = ["S101", "D100", "D101", "D102", "D103", "D104"]
+"tests/*" = [
+    "S101",
+    "D100",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "ARG001",
+    "C408",
+    "SLF001"
+]
 "exceptions.py" = ["D107"]
 "noxfile.py" = ["S101"]
 
+[lint.pydocstyle]
+convention = "google"
 
 [format]
 # Like Black, use double quotes for strings.
