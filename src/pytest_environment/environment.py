@@ -11,7 +11,7 @@ from _pytest.nodes import Node
 
 @dataclass(frozen=True)
 class Environment:
-    """Represents a collection of services that may be targeted by tests.
+    """Represents a collection of services that may get targeted by tests.
 
     Primarily allows parametrizing other fixtures by passing them config folders to reference.
     """

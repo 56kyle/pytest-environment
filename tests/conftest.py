@@ -7,7 +7,11 @@ from _pytest.fixtures import FixtureRequest
 
 
 collect_ignore: list[str] = ["data", "conf"]
-pytest_plugins: list[str] = ["pytester"]
+pytest_plugins: list[str] = [
+    "pytester",
+    # "pytest_repo_structure",
+    "tests.fixtures.environment",
+]
 
 
 @pytest.fixture(scope="session")
